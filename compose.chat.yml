@@ -1,0 +1,20 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+      target: app
+    ports:
+      - "3001:3001"
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - JWT_SECRET=${JWT_SECRET}
+      - DOMAIN=${DOMAIN}
+      - CHAT_ONLY=true
+      - DB_PATH=/app/data/planning.db
+    volumes:
+      - db-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  db-data:

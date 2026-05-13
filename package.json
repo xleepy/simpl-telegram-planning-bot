@@ -1,0 +1,27 @@
+{
+  "name": "planning-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "app",
+    "web"
+  ],
+  "scripts": {
+    "dev:app": "npm run dev -w app",
+    "dev:web": "npm run dev -w web",
+    "dev": "concurrently \"npm run dev:app\" \"npm run dev:web\"",
+    "build:web": "npm run build -w web",
+    "db:push": "npm run db:push -w app",
+    "db:migrate": "npm run db:migrate -w app",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:dev:up": "docker compose -f compose.dev.yml up --build",
+    "docker:dev:down": "docker compose -f compose.dev.yml down",
+    "docker:dev:reset": "docker compose -f compose.dev.yml down -v",
+    "docker:chat:up": "docker compose -f compose.chat.yml up -d --build",
+    "docker:chat:down": "docker compose -f compose.chat.yml down"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

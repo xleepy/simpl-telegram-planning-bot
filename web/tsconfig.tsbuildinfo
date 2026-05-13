@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/components/additemform.tsx","./src/components/categorydot.tsx","./src/components/itemrow.tsx","./src/components/listmanager.tsx","./src/components/listtabs.tsx","./src/components/presencebar.tsx","./src/components/todolist.tsx","./src/hooks/usetelegram.ts","./src/hooks/usewebsocket.ts","./src/lib/api.ts"],"version":"5.9.3"}
