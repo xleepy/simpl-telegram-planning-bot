@@ -138,6 +138,59 @@ export function setupListCommands(bot: Bot): void {
     await ctx.reply(`Active list: *${list.name}*`, { parse_mode: 'Markdown' });
   });
 
+  bot.command('rename', async (ctx) => {
+    const chatId = String(ctx.chat.id);
+    const args = ctx.match?.trim();
+
+    if (!args) {
+      await ctx.reply('Usage: /rename <old-name> <new-name>\nExample: /rename Groceries Shopping');
+      return;
+    }
+
+    const spaceIndex = args.indexOf(' ');
+    if (spaceIndex === -1) {
+      await ctx.reply('Usage: /rename <old-name> <new-name>\nExample: /rename Groceries Shopping');
+      return;
+    }
+
+    const oldName = args.slice(0, spaceIndex).trim();
+    const newName = args.slice(spaceIndex + 1).trim();
+
+    if (!oldName || !newName) {
+      await ctx.reply('Usage: /rename <old-name> <new-name>\nExample: /rename Groceries Shopping');
+      return;
+    }
+
+    const [list] = await db
+      .select()
+      .from(listsTable)
+      .where(and(eq(listsTable.chatInstance, chatId), eq(listsTable.name, oldName)))
+      .limit(1);
+
+    if (!list) {
+      await ctx.reply(`List "${oldName}" not found.`);
+      return;
+    }
+
+    const [existingNew] = await db
+      .select()
+      .from(listsTable)
+      .where(and(eq(listsTable.chatInstance, chatId), eq(listsTable.name, newName)))
+      .limit(1);
+
+    if (existingNew && existingNew.id !== list.id) {
+      await ctx.reply(`A list named "${newName}" already exists.`);
+      return;
+    }
+
+    await db
+      .update(listsTable)
+      .set({ name: newName })
+      .where(eq(listsTable.id, list.id));
+
+    await ctx.reply(`Renamed "${oldName}" to "${newName}".`);
+  });
+
   bot.command('switch', async (ctx) => {
     const chatId = String(ctx.chat.id);
     const name = ctx.match?.trim();

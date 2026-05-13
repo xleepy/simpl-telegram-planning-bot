@@ -213,6 +213,51 @@ export function setupItemCommands(bot: Bot): void {
     }
   });
 
+  bot.command('delete', async (ctx) => {
+    const chatId = String(ctx.chat.id);
+    const raw = ctx.match?.trim();
+
+    if (!raw) {
+      await ctx.reply('Usage: /delete <number> [, number2, ...]\nExamples:\n/delete 3\n/delete 1,2,3\n/delete 1 3 5');
+      return;
+    }
+
+    const listId = getActiveList(chatId);
+    if (!listId) {
+      await ctx.reply('No active list. Use /list to view a list first.');
+      return;
+    }
+
+    const items = await db
+      .select()
+      .from(itemsTable)
+      .where(eq(itemsTable.listId, listId))
+      .orderBy(itemsTable.createdAt);
+
+    const indices = raw
+      .split(/[\s,]+/)
+      .map((s) => parseInt(s.trim(), 10))
+      .filter((n) => !isNaN(n) && n > 0 && n <= items.length);
+
+    if (indices.length === 0) {
+      await ctx.reply(`No valid item numbers. List has ${items.length} items.`);
+      return;
+    }
+
+    const targets = indices.map((n) => items[n - 1]);
+
+    for (const item of targets) {
+      await db.delete(itemsTable).where(eq(itemsTable.id, item.id));
+    }
+
+    if (targets.length === 1) {
+      await ctx.reply(`Deleted: ${targets[0].text}`);
+    } else {
+      const list = targets.map((t) => `• ${t.text}`).join('\n');
+      await ctx.reply(`Deleted ${targets.length} items:\n${list}`);
+    }
+  });
+
   bot.command('undo', async (ctx) => {
     const chatId = String(ctx.chat.id);
     const raw = ctx.match?.trim();

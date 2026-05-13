@@ -55,12 +55,14 @@ export function setupCommands(bot: Bot): void {
       `/switch \\<name\\> — Switch active list\n` +
       `/lists — Show all lists\n` +
       `/deletelist \\<name\\> — Delete a list\n` +
+      `/rename \\<old\\> \\<new\\> — Rename a list\n` +
       `/current — Show active list\n\n` +
       `*Items*\n` +
       `/add \\<text\\> \\[\\#category\\] — Add item\n` +
       `/list \\[name\\] — Show list items, set as active\n` +
       `/done \\<number\\> — Mark item done\n` +
-      `/undo \\<number\\> — Undo mark`
+      `/undo \\<number\\> — Undo mark\n` +
+      `/delete \\<number\\> — Delete an item`
     );
   });
 }
